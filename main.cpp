@@ -11,7 +11,8 @@
 
 using namespace std;
 
-int main() {
+int main()
+{
     srand((unsigned int)time(NULL));
     system("cls");
 
@@ -47,34 +48,67 @@ int main() {
 
     system("cls");
     Player player(uName, cClass, isHC);
+    
+    // 사냥터별 몬스터 목록(벡터) 만들기
+    vector<Monster> forestMonsters;
+    forestMonsters.push_back(Monster("초록 슬라임", 40, 10, 15, 10, 50));
+    forestMonsters.push_back(Monster("먼지 요정", 50, 15, 20, 10, 80));
 
-    vector<Monster> monsters;
-    monsters.push_back(Monster("초록 슬라임", 40, 10, 15, 10, 50));
-    monsters.push_back(Monster("먼지 요정", 50, 15, 20, 10, 80));
-    monsters.push_back(Monster("바위 게", 70, 20, 30, 10, 120));
-    monsters.push_back(Monster("그림자 브루트", 150, 40, 50, 20, 300));
+    vector<Monster> mineMonsters;
+    mineMonsters.push_back(Monster("바위 게", 30, 20, 15, 10, 120));
+    mineMonsters.push_back(Monster("그림자 브루트", 40, 40, 20, 20, 300));
 
-    for (size_t i = 0; i < monsters.size(); i++) {
-        if (!player.isAlive()) break;
-        system("cls");
-        cout << "------------------------------------------------\n";
-        cout << "  [!] " << monsters[i].GetName() << " 등장!\n";
-        cout << "------------------------------------------------\n\n";
-        system("pause");
+    while (player.isAlive())
+    {
+        // 사냥터 선택 (웨이포인트 구현)
+        cout << "\n어디로 이동하시겠습니까? (0번 누르면 게임 종료)\n";
+        cout << "1. 평화로운 숲 (쉬움)\n";
+        cout << "2. 어두운 광산 (어려움)\n";
+        cout << "선택 : ";
+        int mapChoice;
+        cin >> mapChoice;
+        
+        if (mapChoice == 0) break;
 
-        Battle battle(player, monsters[i]);
-        if (!battle.Run()) {
-            cout << "\n당신은 쓰러졌습니다...\n";
-            break;
-        } else {
-            cout << "\n승리했습니다!\n";
-            player.GainExp(monsters[i].GetExpReward());
-            player.Loot(2);
+        // 선택된 사냥터 벡터 결정
+        vector<Monster>* targetStage = (mapChoice == 1) ? &forestMonsters : &mineMonsters;
+        string stageName = (mapChoice == 1) ? "숲" : "광산";
+
+        // 전투 루프 (선택한 사냥터에서 3마리 랜덤 스폰)
+        for (int i = 0; i < 3; i++) {
+            if (!player.isAlive()) break;
+
+            system("cls");
+        
+            // 해당 사냥터 벡터 내에서 무작위 몬스터 한 마리 선택
+            int randomIndex = rand() % targetStage->size();
+            Monster currentMonster = (*targetStage)[randomIndex];
+
+            cout << "------------------------------------------\n";
+            cout << " [" << stageName << " 탐험 중] " << currentMonster.GetName() << " 등장!\n";
+            cout << "------------------------------------------\n\n";
+            system("pause");
+
+            Battle battle(player, currentMonster);
+            if (!battle.Run()) {
+                cout << "\n당신은 쓰러졌습니다...\n";
+                break;
+            } else {
+                cout << "\n승리했습니다!\n";
+                player.GainExp(currentMonster.GetExpReward());
+                player.Loot(2); // 벡터 루팅 함수 실행
+                system("pause");
+            }
+        }
+
+        if (player.isAlive())
+        {
+            cout << "\n" << stageName << "탐험을 마치고 마을로 돌아왔습니다!\n";
             system("pause");
         }
     }
-
-    if (player.isAlive()) cout << "\n광산을 정복했습니다!\n";
+    
+    
     system("pause");
     return 0;
 }

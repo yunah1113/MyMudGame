@@ -50,21 +50,30 @@ void Player::GainExp(int amount) {
 }
 
 void Player::Loot(int count) {
+    
+    // 아이템 풀
+    vector<string> itemPool = { "돌멩이", "금광석", "새먼베리", "낡은 검", "단단한 나무" };
+
     cout << "\n [알림] 광산 바닥에서 무언가를 발견했습니다! \n";
+
     for (int i = 0; i < count; i++) {
-        inventory.push_back(rand() % 4 + 1);
-        cout << "--------------------------------------------\n";
-        cout << "   [ 가 방 안 소 지 품 ] \n";
-        cout << "--------------------------------------------\n";
-        for (size_t j = 0; j < inventory.size(); j++) {
-            string itemName;
-            if (inventory[j] == 1) itemName = "금광석";
-            else if (inventory[j] == 2) itemName = "새먼베리";
-            else if (inventory[j] == 3) itemName = "낡은 검";
-            else if (inventory[j] == 4) itemName = "단단한 나무";
-            else itemName = "돌멩이";
-            cout << "  슬롯 " << j << " ........... [" << itemName << "]\n";
-        }
-        cout << "--------------------------------------------\n";
+        
+        // 랜덤하게 아이템 이름을 선택
+        int randomIndex = rand() % itemPool.size();
+        string pickedItem = itemPool[randomIndex];
+        
+        inventory.push_back(pickedItem);
     }
+
+    // 가방 출력 로직
+    cout << "------------------------------------------\n";
+    cout << "   [ 가 방 안 소 지 품 ] \n";
+    cout << "------------------------------------------\n";
+
+    for (size_t j = 0; j < inventory.size(); j++) {
+        string itemName = inventory[j]; 
+
+        cout << "  슬롯 " << j << " .......... [" << itemName << "]\n";
+    }
+    cout << "------------------------------------------\n";
 }

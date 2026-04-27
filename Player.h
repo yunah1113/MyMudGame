@@ -19,9 +19,10 @@ private:
 	int expToNextLevel;
     
 	// 인벤토리: 정수형(아이템 ID)을 담는 가변 배열
-	vector<int> inventory;
+	vector<string> inventory;
     
 public:
+	
 	// 생성자: 이름, 직업, 하드코어 여부를 받아 초기화
 	Player(const string& name, const string& characterClass, bool isHardcore);
     
