@@ -9,7 +9,7 @@ using namespace std;
 class Player : public Character
 {
 private:
-	// Player 고유 정보 (부모인 Character에는 없는 것들)
+	// Player 고유 정보
 	string name;
 	string characterClass;
 	bool isHardcore;

@@ -38,7 +38,7 @@ int Player::CriticalAttack() const {
     return (int)(attackDamage * 2);
 }
 
-void Player::GainExp(int amount) {.
+void Player::GainExp(int amount) {
     exp += amount;
     cout << " [경험치 +" << amount << " 획득]\n";
     if (exp >= expToNextLevel) {

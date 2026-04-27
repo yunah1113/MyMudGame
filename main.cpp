@@ -12,7 +12,6 @@
 using namespace std;
 
 int main() {
-    system("chcp 65001");
     srand((unsigned int)time(NULL));
     system("cls");
 
