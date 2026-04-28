@@ -77,3 +77,15 @@ void Player::Loot(int count) {
     }
     cout << "------------------------------------------\n";
 }
+
+// 새로운 아이템 습득 함수 추가
+void Player::PickUpItem(unique_ptr<Item> item) {
+    if (!item) return;
+
+    cout << "[알림] " << item->GetName() << "을(를) 주웠습니다.\n";
+
+    // std::move를 사용해 소유권을 인벤토리 벡터로 이전
+    inventory.push_back(std::move(item)); 
+    
+    cout << "[상태] 현재 인벤토리 아이템 개수: " << inventory.size() << "개\n";
+}

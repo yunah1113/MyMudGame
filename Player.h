@@ -1,7 +1,9 @@
 ﻿#pragma once
+#include <memory>
 #include <string>
 #include <vector>
 #include "Character.h"
+#include "item.h"
 
 using namespace std;
 
@@ -19,7 +21,9 @@ private:
 	int expToNextLevel;
     
 	// 인벤토리: 정수형(아이템 ID)을 담는 가변 배열
-	vector<string> inventory;
+	vector<unique_ptr<Item>> inventory;
+	
+	void PickUpItem(unique_ptr<Item> item);
     
 public:
 	
