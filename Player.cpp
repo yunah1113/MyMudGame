@@ -82,7 +82,7 @@ void Player::Loot(int count) {
 void Player::PickUpItem(unique_ptr<Item> item) {
     if (!item) return;
 
-    cout << "[알림] " << item->GetName() << "을(를) 주웠습니다.\n";
+    cout << "▶ [아이템 획득] 가방에 " << item->GetName() << "을 담았습니다." << endl;
 
     // std::move를 사용해 소유권을 인벤토리 벡터로 이전
     inventory.push_back(std::move(item)); 

@@ -22,8 +22,6 @@ private:
     
 	// 인벤토리: 정수형(아이템 ID)을 담는 가변 배열
 	vector<unique_ptr<Item>> inventory;
-	
-	void PickUpItem(unique_ptr<Item> item);
     
 public:
 	
@@ -44,4 +42,6 @@ public:
 	void PreviewCritical() const;    // 크리티컬 데미지 미리보기 출력
 	void PrintLevel() const;         // 현재 레벨 출력
 	void Loot(int count = 3);        // 아이템 획득 및 인벤토리 출력
+	
+	void PickUpItem(unique_ptr<Item> item);
 };

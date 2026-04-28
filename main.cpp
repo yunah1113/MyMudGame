@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <vector>
 #include <ctime>
+#include <memory>
 
 #include "Battle.h"
 #include "Monster.h"
@@ -96,7 +97,19 @@ int main()
             } else {
                 cout << "\n승리했습니다!\n";
                 player.GainExp(currentMonster.GetExpReward());
-                player.Loot(2); // 벡터 루팅 함수 실행
+                
+                // 월드에 아이템 생성
+                auto droppedItem = make_unique<Item>("반짝이는 보석");
+                
+                // 소유권 이전 실행
+                player.PickUpItem(std::move(droppedItem));
+                
+                // 소유권 이전 검증
+                if (droppedItem == nullptr)
+                {
+                    cout << "(시스템: droppedItem 포인터가 nullptr임을 확인했습니다.)" << endl;
+                }
+                
                 system("pause");
             }
         }
