@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 
+class Player; // 전방 선언
+
 class Item {
 public:
     // 생성자: 아이템 생성 시 로그 출력
@@ -18,4 +20,5 @@ public:
 
 private:
     std::string name;
+    std::weak_ptr<Player> owner; // 주인을 가리키는 약한 참조 (순환 참조 방지)
 };

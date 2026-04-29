@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <memory>
 #include <string>
+#include <algorithm>
 #include <vector>
 #include "Character.h"
 #include "item.h"
@@ -44,4 +45,6 @@ public:
 	void Loot(int count = 3);        // 아이템 획득 및 인벤토리 출력
 	
 	void PickUpItem(unique_ptr<Item> item);
+	
+	void UseItem(std::string itemName);
 };

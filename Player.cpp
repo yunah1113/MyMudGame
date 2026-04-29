@@ -6,12 +6,14 @@
 
 using namespace std;
 
-// 생성자: 부모 클래스 Character의 생성자를 먼저 호출합니다.
+// 생성자
 Player::Player(const string& name, const string& characterClass, bool isHardcore)
     : Character(50, 50, 50, 50, 1),
       name(name), characterClass(characterClass), isHardcore(isHardcore),
-      exp(0), expToNextLevel(100) 
+      exp(0), expToNextLevel(100)
 {
+    inventory.reserve(20); // 가방 크기 미리 20칸 예약 (성능 최적화)
+    
     // 부모에게 물려받은 변수들을 사용하여 수치 계산 (오류 방지용 괄호 추가)
     maxHp = vitality * 2; 
     hp = maxHp;
@@ -62,7 +64,6 @@ void Player::Loot(int count) {
         int randomIndex = rand() % itemPool.size();
         string pickedItem = itemPool[randomIndex];
         
-        inventory.push_back(pickedItem);
     }
 
     // 가방 출력 로직
@@ -71,7 +72,7 @@ void Player::Loot(int count) {
     cout << "------------------------------------------\n";
 
     for (size_t j = 0; j < inventory.size(); j++) {
-        string itemName = inventory[j]; 
+        string itemName = inventory[j]->GetName(); 
 
         cout << "  슬롯 " << j << " .......... [" << itemName << "]\n";
     }
@@ -88,4 +89,28 @@ void Player::PickUpItem(unique_ptr<Item> item) {
     inventory.push_back(std::move(item)); 
     
     cout << "[상태] 현재 인벤토리 아이템 개수: " << inventory.size() << "개\n";
+}
+
+// 반복자 삭제 로직 추가
+void Player::UseItem(string itemName)
+{
+    // 고전 반복자 순회 방식
+    for (auto it = inventory.begin(); it != inventory.end(); )
+    {
+        // it가 가리키는 스마트 포인터의 이름 확인
+        if ((*it)->GetName() == itemName)
+        {
+            std::cout << "[사용] " << itemName << "을(를) 사용하여 가방에서 제거합니다.\n";
+            
+            // it = erase(it) 패턴 (반복자 무효화 방지)
+            it = inventory.erase(it);
+            
+            return; // 하나만 지우고 종료
+        }
+        else
+        {
+            ++it; // 지우지 않았을 때만 반복자 증가
+        }
+    }
+    std::cout << "[실패] " << itemName << "이 가방에 없습니다.\n";
 }

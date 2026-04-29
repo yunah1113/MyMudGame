@@ -99,10 +99,16 @@ int main()
                 player.GainExp(currentMonster.GetExpReward());
                 
                 // 월드에 아이템 생성
-                auto droppedItem = make_unique<Item>("반짝이는 보석");
+                auto droppedItem = std::make_unique<Item>("반짝이는 보석");
                 
                 // 소유권 이전 실행
                 player.PickUpItem(std::move(droppedItem));
+                
+                // 아이템 사용 및 삭제
+                player.UseItem("반짝이는 보석");
+                
+                // 가방 상태 확인
+                player.Loot();
                 
                 // 소유권 이전 검증
                 if (droppedItem == nullptr)
