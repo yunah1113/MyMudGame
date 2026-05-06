@@ -2,7 +2,8 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
-#include <cstdlib> // rand() 사용을 위해 필요
+#include <cstdlib> 
+#include <algorithm>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ Player::Player(const string& name, const string& characterClass, bool isHardcore
 {
     inventory.reserve(20); // 가방 크기 미리 20칸 예약 (성능 최적화)
     
-    // 부모에게 물려받은 변수들을 사용하여 수치 계산 (오류 방지용 괄호 추가)
+    // 능력치 계산
     maxHp = vitality * 2; 
     hp = maxHp;
     
@@ -26,20 +27,24 @@ Player::Player(const string& name, const string& characterClass, bool isHardcore
     movingSpeed = (double)dexterity / 30.0;
 }
 
+// 레벨업 로직
 void Player::LevelUp() {
     level++;
     cout << "\n [!] 레벨 업! 당신의 농사 기술이 숙련되었습니다. \n";
 }
 
+// 치명타 예보
 void Player::PreviewCritical() const {
     float preview = attackDamage * 2.0f;
     cout << " * 예상 치명타 데미지: " << preview << " *\n";
 }
 
+// 치명타 공격력 반환
 int Player::CriticalAttack() const {
     return (int)(attackDamage * 2);
 }
 
+// 경험치 획득 및 레벨업 체크
 void Player::GainExp(int amount) {
     exp += amount;
     cout << " [경험치 +" << amount << " 획득]\n";
@@ -51,66 +56,56 @@ void Player::GainExp(int amount) {
     }
 }
 
+// 가방 목록 출력 (기존 로직 유지)
 void Player::Loot(int count) {
-    
-    // 아이템 풀
-    vector<string> itemPool = { "돌멩이", "금광석", "새먼베리", "낡은 검", "단단한 나무" };
-
-    cout << "\n [알림] 광산 바닥에서 무언가를 발견했습니다! \n";
-
-    for (int i = 0; i < count; i++) {
-        
-        // 랜덤하게 아이템 이름을 선택
-        int randomIndex = rand() % itemPool.size();
-        string pickedItem = itemPool[randomIndex];
-        
-    }
-
-    // 가방 출력 로직
     cout << "------------------------------------------\n";
     cout << "   [ 가 방 안 소 지 품 ] \n";
     cout << "------------------------------------------\n";
 
     for (size_t j = 0; j < inventory.size(); j++) {
         string itemName = inventory[j]->GetName(); 
-
         cout << "  슬롯 " << j << " .......... [" << itemName << "]\n";
     }
     cout << "------------------------------------------\n";
 }
 
-// 새로운 아이템 습득 함수 추가
+// 아이템 습득 (소유권 이전)
 void Player::PickUpItem(unique_ptr<Item> item) {
     if (!item) return;
 
     cout << "▶ [아이템 획득] 가방에 " << item->GetName() << "을 담았습니다." << endl;
-
-    // std::move를 사용해 소유권을 인벤토리 벡터로 이전
     inventory.push_back(std::move(item)); 
-    
     cout << "[상태] 현재 인벤토리 아이템 개수: " << inventory.size() << "개\n";
 }
 
-// 반복자 삭제 로직 추가
+// 람다를 이용한 아이템 사용 및 삭제
 void Player::UseItem(string itemName)
 {
-    // 고전 반복자 순회 방식
-    for (auto it = inventory.begin(); it != inventory.end(); )
+    auto it = std::find_if(inventory.begin(), inventory.end(), 
+        [&itemName](const std::unique_ptr<Item>& item) {
+            return item->GetName() == itemName;
+        });
+
+    if (it != inventory.end())
     {
-        // it가 가리키는 스마트 포인터의 이름 확인
-        if ((*it)->GetName() == itemName)
-        {
-            std::cout << "[사용] " << itemName << "을(를) 사용하여 가방에서 제거합니다.\n";
-            
-            // it = erase(it) 패턴 (반복자 무효화 방지)
-            it = inventory.erase(it);
-            
-            return; // 하나만 지우고 종료
-        }
-        else
-        {
-            ++it; // 지우지 않았을 때만 반복자 증가
-        }
+        std::cout << "[사용] " << (*it)->GetName() << " 아이템을 사용했습니다.\n";
+        inventory.erase(it); 
     }
-    std::cout << "[실패] " << itemName << "이 가방에 없습니다.\n";
+    else
+    {
+        std::cout << "[실패] " << itemName << "이(가) 가방에 없습니다.\n";
+    }
+}
+
+// Erase-Remove Idiom 일괄 삭제
+void Player::ClearLowGradeItems()
+{
+    cout << "\n[시스템] 가방 정리를 시작합니다 (1등급 아이템 제거)..." << endl;
+
+    inventory.erase(std::remove_if(inventory.begin(), inventory.end(), 
+        [](const std::unique_ptr<Item>& item) { 
+            return item->GetGrade() == 1; 
+        }), inventory.end());
+
+    cout << "[시스템] 가방 정리가 완료되었습니다.\n" << endl;
 }

@@ -47,4 +47,5 @@ public:
 	void PickUpItem(unique_ptr<Item> item);
 	
 	void UseItem(std::string itemName);
+	void ClearLowGradeItems();
 };
